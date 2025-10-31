@@ -3,13 +3,14 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo Installing dependencies...
-      - yum install -y unzip
+      - echo "🔧 Installing dependencies..."
+      - apt-get update -y
+      - apt-get install -y unzip
   build:
     commands:
-      - echo Building project...
+      - echo "🚀 Building project..."
       - ls -la
-      - echo Build complete.
+      - echo "✅ Build complete!"
 
 artifacts:
   files:
