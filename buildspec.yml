@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - yum install -y unzip
+  build:
+    commands:
+      - echo Building project...
+      - ls -la
+      - echo Build complete.
+
+artifacts:
+  files:
+    - '**/*'
+
