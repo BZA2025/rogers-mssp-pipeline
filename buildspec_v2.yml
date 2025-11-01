@@ -14,27 +14,27 @@ phases:
       - apt-get update -y && apt-get install -y jq git wget unzip docker.io
 
   pre_build:
-    commands:
-      - echo "🔑 [PRE-BUILD] Running secret scanning with Gitleaks..."
-      - wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz
-      - tar -xzf gitleaks_8.18.2_linux_x64.tar.gz
-      - ./gitleaks detect --source . --report-format json --report-path gitleaks-report.json || true
-      - echo "🔍 Gitleaks scan complete."
+  commands:
+    - echo "🔑 [PRE-BUILD] Running secret scanning with Gitleaks..."
+    - wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz
+    - tar -xzf gitleaks_8.18.2_linux_x64.tar.gz
+    - ./gitleaks detect --source . --report-format json --report-path gitleaks-report.json || true
+    - echo "✅ Gitleaks scan complete."
 
-      - echo "🧠 [PRE-BUILD] Starting SonarQube container..."
-      - docker run -d --name sonarqube -p 9000:9000 sonarqube:${SONARQUBE_VERSION}
-      - sleep 60  # give SonarQube time to initialize
-      - echo "🚀 Running SonarScanner..."
-      - wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-linux.zip
-      - unzip -q sonar-scanner-5.0.1.3006-linux.zip
-      - export PATH=$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin
-      - sonar-scanner \
-          -Dsonar.projectKey=$PROJECT_NAME \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=http://localhost:9000 \
-          -Dsonar.login=admin \
-          -Dsonar.password=admin || true
-      - echo "✅ SonarQube SAST completed."
+    - echo "🧠 [PRE-BUILD] Starting SonarQube container..."
+    - docker run -d --name sonarqube -p 9000:9000 sonarqube:${SONARQUBE_VERSION}
+    - sleep 60  # give SonarQube time to initialize
+    - echo "🚀 Running SonarScanner..."
+    - curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-linux.zip
+    - unzip -q sonar-scanner.zip
+    - export PATH=$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin
+    - sonar-scanner \
+        -Dsonar.projectKey=$PROJECT_NAME \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=http://localhost:9000 \
+        -Dsonar.login=admin \
+        -Dsonar.password=admin || true
+    - echo "✅ SonarQube SAST completed."
 
   build:
     commands:
