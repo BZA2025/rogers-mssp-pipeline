@@ -12,8 +12,6 @@ phases:
     commands:
       - echo "🧱 [INSTALL] Installing prerequisites..."
       - apt-get update -y && apt-get install -y jq git wget unzip docker.io
-      - service docker start
-      - echo "✅ Docker started"
 
   pre_build:
     commands:
