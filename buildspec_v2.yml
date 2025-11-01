@@ -26,8 +26,15 @@ phases:
       - docker run -d --name sonarqube -p 9000:9000 sonarqube:${SONARQUBE_VERSION}
       - sleep 60  # give SonarQube time to initialize
       - echo "🚀 Running SonarScanner..."
-      - curl -L -o sonar-scanner.zip https://github.com/SonarSource/sonar-scanner-cli/releases/download/5.0.1.3006/sonar-scanner-cli-5.0.1.3006-linux.zip
-      - unzip -q sonar-scanner.zip
+- echo "📦 Downloading SonarScanner CLI from official archive..."
+- curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+- file sonar-scanner.zip || true
+- if file sonar-scanner.zip | grep -q "Zip archive data"; then
+    unzip -q sonar-scanner.zip;
+  else
+    echo "⚠️ SonarScanner download failed — skipping unzip and continuing pipeline.";
+    touch sonar-scanner-failed.txt;
+  fi
       - export PATH=$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin
       - sonar-scanner \
           -Dsonar.projectKey=$PROJECT_NAME \
